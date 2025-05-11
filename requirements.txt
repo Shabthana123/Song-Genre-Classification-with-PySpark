@@ -1,0 +1,15 @@
+flask
+# scikit-learn
+matplotlib
+plotly
+nltk
+pyspark
+# pandas
+streamlit
+# seaborn
+# torch
+# optuna
+# numpycls
+ipykernel
+findspark
+Pandas
