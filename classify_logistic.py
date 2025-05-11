@@ -55,24 +55,12 @@ spark.catalog.clearCache()  # Clear the cache
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words("english"))
 
-# def preprocess(text):
-#     text = text.lower()
-#     text = re.sub(f"[{re.escape(string.punctuation)}]", " ", text)
-#     tokens = text.split()
-#     tokens = [lemmatizer.lemmatize(w) for w in tokens if w not in stop_words]
-#     return " ".join(tokens)
-
 def preprocess(text):
     text = text.lower()
     text = re.sub(f"[{re.escape(string.punctuation)}]", " ", text)
     tokens = text.split()
     tokens = [lemmatizer.lemmatize(w) for w in tokens if w not in stop_words]
     return " ".join(tokens)
-# def preprocess(text):
-#     words = text.lower().split()
-#     words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
-#     return " ".join(words)
-
 
 def run():
     # Load data
@@ -91,17 +79,6 @@ def run():
     stopword_remover = StopWordsRemover(inputCol="tokens", outputCol="filtered_tokens")
     vectorizer = CountVectorizer(inputCol="filtered_tokens", outputCol="raw_features", vocabSize=15000, minDF=2)
     idf = IDF(inputCol="raw_features", outputCol="features")
-
-    # Classifier
-    # lr = LogisticRegression(featuresCol="features", labelCol="label", maxIter=20)
-
-    # # Pipeline
-    # pipeline = Pipeline(stages=[label_indexer, tokenizer, stopword_remover, vectorizer, idf, lr])
-
-    # # CLassifier - Naive Bayes
-
-    # nb = NaiveBayes(featuresCol="features", labelCol="label", modelType="multinomial")
-    # pipeline = Pipeline(stages=[label_indexer, tokenizer, stopword_remover, vectorizer, idf, nb])
 
     # Replace Naive Bayes with Logistic Regression
     lr = LogisticRegression(featuresCol="features", labelCol="label", maxIter=20, regParam=0.3, elasticNetParam=0)
@@ -127,11 +104,6 @@ def run():
     train_df = reduce(DataFrame.unionAll, train_dfs)
     test_df = reduce(DataFrame.unionAll, test_dfs)
 
-    # try:
-    #     print("genre count: ",df.groupBy("genre").count().orderBy("count", ascending=False).show())
-    # except Exception as e:
-    #     print("Error in genre count: ", e)
-
     # Train model
     model = pipeline.fit(train_df)
 
@@ -152,8 +124,6 @@ def run():
     label_indexer_model.write().overwrite().save("label_indexer_model_logistic")
     vectorizer_model.write().overwrite().save("vectorizer_model_logistic")
     idf_model.write().overwrite().save("idf_model_logistic")
-
-
 
 # Return dictionary of genre probabilities ---
 def predict_genre(lyrics):
@@ -197,14 +167,6 @@ def predict_and_plot(lyrics, show_plot=True):
 
     return most_probable_genre, plt
 
-
 # # Example usage
 if __name__ == "__main__":
     run()
-#     example_lyrics = """I got a feeling that tonight's gonna be a good night
-#     That tonight's gonna be a good night
-#     That tonight's gonna be a good, good night"""
-    
-#     most_probable_genre, plot = predict_and_plot(example_lyrics)
-#     # plot.savefig("genre_prediction.png")
-#     print(f"Most Probable Genre: {most_probable_genre}")
