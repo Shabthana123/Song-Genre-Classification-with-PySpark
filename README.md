@@ -70,7 +70,7 @@ cd Song-Genre-Classification-with-PySpark
 To run the project:
 
 ```bash
-run.bat
+.\run.bat
 ```
 
 ### 🧰 Manual Setup (Alternative to run.bat)
